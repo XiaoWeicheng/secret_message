@@ -1,0 +1,3 @@
+# Project exclude paths
+/secret_message_client/target/
+/secret_message_common/target/

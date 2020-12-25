@@ -1,0 +1,5 @@
+logging:
+  level:
+    root: info
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %C#%M:%L - %msg%n'
