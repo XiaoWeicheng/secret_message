@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.secret_message.ClientDelegate;
 import org.example.secret_message.MessageHandler;
 import org.example.secret_message.Server;
-import org.example.secret_message.User;
+import org.example.secret_message.user.User;
 import org.example.secret_message.message.Message;
 import org.example.secret_message.message.MessageType;
 import org.springframework.stereotype.Component;

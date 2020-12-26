@@ -3,3 +3,24 @@ logging:
     root: info
   pattern:
     console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %C#%M:%L - %msg%n'
+
+spring:
+  datasource:
+    schema: classpath:h2/schema.sql
+    data: classpath:h2/data.sql
+    url: jdbc:h2:mem:test
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      settings:
+        web-allow-others: true
+        trace: true
+      path: /h2-console
+      enabled: true
+
+mybatis:
+  type-aliases-package: org.example.secret_message.user
+  configuration:
+    map-underscore-to-camel-case: true

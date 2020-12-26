@@ -1,21 +1,20 @@
 package org.example.secret_message.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.example.secret_message.ClientDelegate;
 import org.example.secret_message.KeyDispatcher;
 import org.example.secret_message.MessageHandler;
 import org.example.secret_message.Server;
-import org.example.secret_message.User;
 import org.example.secret_message.data.LoginRequest;
 import org.example.secret_message.generator.MessageGenerators;
 import org.example.secret_message.message.Message;
 import org.example.secret_message.message.MessageType;
+import org.example.secret_message.user.User;
+import org.example.secret_message.user.UserMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.net.Socket;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,6 +25,8 @@ import java.util.Set;
 @Component
 public class LoginHandler implements MessageHandler {
 
+    @Resource
+    private UserMapper userMapper;
     @Resource
     private Server server;
     @Resource
@@ -48,21 +49,15 @@ public class LoginHandler implements MessageHandler {
                     messageGenerators.generate(null, MessageType.LOGIN_FAILED, "参数错误", clientDelegate));
             return;
         }
-        if (!validateUser(loginRequest) || !validatePassword(loginRequest)) {
-            log.info("登录失败 用户名或错误 {}", message.getData());
+        User user = userMapper.selectByUserNameAndPassword(loginRequest.getUserName(), loginRequest.getPassword());
+        if (user == null) {
+            log.info("登录失败 用户名或密码错误 {}", message.getData());
             server.sendToClient(clientDelegate,
                     messageGenerators.generate(null, MessageType.LOGIN_FAILED, "用户名或密码错误", clientDelegate));
             return;
         }
-        clientDelegate.login(new User(loginRequest.getUserName(), loginRequest.getPassword()), loginRequest.getPort());
+        clientDelegate.login(user, loginRequest.getPort());
         keyDispatcher.dispatchRootKey(clientDelegate);
     }
 
-    private boolean validateUser(LoginRequest loginRequest) {
-        return StringUtils.isNotBlank(loginRequest.getUserName()) && loginRequest.getUserName().startsWith("test");
-    }
-
-    private boolean validatePassword(LoginRequest loginRequest) {
-        return Objects.equals(loginRequest.getPassword(), "1");
-    }
 }
